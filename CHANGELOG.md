@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.0.1 - 2024-09-07
+
+### Added
+- Add `valueType()` to field. (thanks @markhuot).
+
+### Fixed
+- Fix `getTableAttributeHtml` not using default CP rendering. (thanks @regularlabs).
+
 ## 4.0.0 - 2024-05-13
 
 ### Changed
