@@ -15,6 +15,7 @@ use craft\helpers\Cp;
 use craft\helpers\Gql as GqlHelper;
 use craft\services\Gql as GqlService;
 use craft\helpers\ArrayHelper;
+use craft\helpers\ElementHelper;
 use craft\helpers\Html;
 
 use GraphQL\Type\Definition\Type;
@@ -69,7 +70,7 @@ class ManyToManyField extends Field implements PreviewableFieldInterface
         // Save the raw value for add/delete elements to use in `saveRelationship()`. We have to use the cache
         // as this isn't retained in `afterElementSave()`, and we want to wait until after the element has saved
         // to save the relationship, in case something went wrong with the element saving.
-        $cacheKey = implode('--', ['many-to-many', $this->handle, $element->uid]);
+        $cacheKey = implode('--', ['many-to-many', $this->handle, $element->canonicalUid]);
         Craft::$app->getCache()->set($cacheKey, ($value ?? []));
 
         if ($element && $sourceValue && $this->singleField) {
@@ -77,7 +78,8 @@ class ManyToManyField extends Field implements PreviewableFieldInterface
 
             // Get all the entries that this has already been attached to
             if ($relatedSection) {
-                return ManyToMany::$plugin->getService()->getRelatedEntries($element, $relatedSection, $this->singleField);
+                $res =  ManyToMany::$plugin->getService()->getRelatedEntries($element, $relatedSection, $this->singleField);
+                return $res;
             }
         }
 
@@ -114,7 +116,6 @@ class ManyToManyField extends Field implements PreviewableFieldInterface
     public function afterElementSave(ElementInterface $element, bool $isNew): void
     {
         ManyToMany::$plugin->getService()->saveRelationship($this, $element);
-
         parent::afterElementSave($element, $isNew);
     }
 
